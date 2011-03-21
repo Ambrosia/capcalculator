@@ -2,31 +2,36 @@
 
 class Connection
 #store everything in kilobytes
+#ok maybe im going a little overboard on this part
 @@number_regex = /^[\d.?]+/
 @@kb_regex = /\d+k[a-z]*$/i
 @@mb_regex = /\d+m[a-z]*$/i
 @@gb_regex = /\d+g[a-z]*$/i
-attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
-	def dlspeed=(dlspeed)
-		case dlspeed
+@@percent_regex = /%$/
+
+attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlspdcur, :ulspdcur
+	def dlspdmax=(dlspdmax)
+		case dlspdmax
 			when @@kb_regex
-				@dlspeed = dlspeed.match(@@number_regex).to_s.to_f / 8
+				@dlspdmax = dlspdmax.match(@@number_regex).to_s.to_f / 8
 			when @@mb_regex
-				@dlspeed = dlspeed.match(@@number_regex).to_s.to_f / 8 * 1024
+				@dlspdmax = dlspdmax.match(@@number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didn't enter it in the correct format"
 		end
+		@dlspdcur = 1
 	end
 
-	def ulspeed=(ulspeed)
-		case ulspeed
+	def ulspdmax=(ulspdmax)
+		case ulspdmax
 			when @@kb_regex
-				@ulspeed = ulspeed.match(@@number_regex).to_s.to_f / 8
+				@ulspdmax = ulspdmax.match(@@number_regex).to_s.to_f / 8
 			when @@mb_regex
-				@ulspeed = ulspeed.match(@@number_regex).to_s.to_f / 8 * 1024
+				@ulspdmax = ulspdmax.match(@@number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didnt enter it in the correct format"
 		end
+		@ulspdcur = 1
 	end
 
 	def dlcap=(dlcap)
@@ -52,34 +57,68 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 	end
 
 	def dltime
-		return ((@dlcap / @dlspeed) / 60) < 1 ? (@dlcap / @dlspeed).to_s + " seconds" : ((@dlcap / @dlspeed) / 60).to_s + " minutes"
+		return ((@dlcap / @dlspdmax) / 60) < 1 ? (@dlcap / @dlspdmax).to_s * @dlspdcur + " seconds" : ((@dlcap / @dlspdmax) / 60).to_s + " minutes"
 	end
 
 	def ultime
-		return ((@ulcap / @ulspeed) / 60) < 1 ? (@ulcap / @ulspeed).to_s + " seconds" : ((@ulcap / ulspeed) / 60).to_s + " minutes"
+		return ((@ulcap / @ulspdmax) / 60) < 1 ? (@ulcap / @ulspdmax).to_s * @ulspdcur + " seconds" : ((@ulcap / @ulspdmax) / 60).to_s + " minutes"
+	end
+
+	def dlspdcur=(dlspdcur)
+		case dlspdcur
+			when @@percent_regex
+				@dlspdcur = dlspdcur.match(@@number_regex).to_s.to_f / 100
+			when @@kb_regex
+				@dlspdcur = dlspdcur.match(@@number_regex).to_s.to_f / @dlspdmax
+			when @@number_regex
+				@dlspdcur = dlspdcur.match(@@number_regex).to_s.to_f
+				raise RangeError, "you entered a number higher than 1 that wasn't a transfer speed or percentage" if @dlspdcur > 1
+			else
+				raise "this exception is not helpful"
+		end
+	end
+
+	def ulspdcur=(ulspdcur)
+		case ulspdcur
+			when @@percent_regex
+				@ulspdcur = ulspdcur.match(@@number_regex).to_s.to_f / 100
+			when @@kb_regex
+				@ulspdcur = ulspdcur.match(@@number_regex).to_s.to_f / @ulspdmax
+			when @@number_regex
+				@ulspdcur = ulspdcur.match(@@number_regex).to_s.to_f
+				raise RangeError, "you entered a number higher than 1 that wasn't a transfer speed or percentage" if @ulspdcur > 1
+			else
+				raise "why"
+		end
 	end
 end
 
 puts "good evening friends today i will be calculatehow long it takes to reach ur dl/ul cap"
-myconnection = Connection.new
+myc = Connection.new
 
 puts "please enter ur download speed in either kbit or mbit in this format: 512kbit"
-myconnection.dlspeed = gets.chomp
+myc.dlspdmax = gets.chomp
 
-puts "ur max download speed is #{myconnection.dlspeed}kb/s right??"
+puts "ur max download speed is #{myc.dlspdmax}kb/s right??"
 puts "please enter ur download cap in either megabytes or gigabytes in this format: 10gb"
-myconnection.dlcap = gets.chomp
+myc.dlcap = gets.chomp
 
-puts "ok this how long it takes to reach ur download cap #{myconnection.dltime}!!!!!!!!!!"
+puts "are you downloading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
+myc.dlspdcur = gets.chomp
+
+puts "ok this how long it takes to reach ur download cap #{myc.dltime} at #{myc.dlspdmax * myc.dlspdcur}kb/s!!!!!!!!!!"
 puts "u wanna do upload speed too??\n(Y/N)"
 
 abort("good night...") if gets.chomp =~ /no?$/i
 
 puts "please enter ur upload speed in either kbit or mbit in this format: 512kbit"
-myconnection.ulspeed = gets.chomp
+myc.ulspdmax = gets.chomp
 
-puts "ur max upload speed is #{myconnection.ulspeed}kb/s right??"
+puts "ur max upload speed is #{myc.ulspdmax}kb/s right??"
 puts "please enter ur upload cap in either megabytes or gigabytes in this format: 10gb"
-myconnection.ulcap = gets.chomp
+myc.ulcap = gets.chomp
 
-puts "download: #{myconnection.dltime}, upload: #{myconnection.ultime}.\nsad, isn't it?"
+puts "are you uploading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
+myc.ulspdcur = gets.chomp
+
+puts "download: #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s, upload: #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s.\nsad, isn't it?"
