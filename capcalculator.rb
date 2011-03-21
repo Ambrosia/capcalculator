@@ -1,96 +1,81 @@
 #!/usr/bin/env ruby
 
-def mbit_to_kbit(speed)
-	return speed * 1024
+class Connection
+#store everything in kilobytes
+attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
+	def dlspeed=(dlspeed)
+		case dlspeed
+			when /\d+k[a-z]*$/i
+				@dlspeed = dlspeed.match(/^\d+/).to_s.to_f / 8
+			when /\d+m[a-z]*$/i
+				@dlspeed = dlspeed.match(/^\d+/).to_s.to_f / 8 * 1024
+			else
+				raise "you didn't enter it in the correct format"
+		end
+	end
+
+	def ulspeed=(ulspeed)
+		case ulspeed
+			when /\d+k[a-z]*$/i
+				@ulspeed = ulspeed.match(/^\d+/).to_s.to_f / 8
+			when /\d+m[a-z]*$/i
+				@ulspeed = ulspeed.match(/^\d+/).to_s.to_f / 8 * 1024
+			else
+				raise "you didnt enter it in the correct format"
+		end
+	end
+
+	def dlcap=(dlcap)
+		case dlcap
+			when /\d+m[a-z]*$/i
+				@dlcap = dlcap.match(/^\d+/).to_s.to_f * 1024
+			when /\d+g[a-z]*$/i
+				@dlcap = dlcap.match(/^\d+/).to_s.to_f * (1024 * 1024)
+			else
+				raise "not right"
+		end
+	end
+
+	def ulcap=(ulcap)
+		case ulcap
+			when /\d+m[a-z]*$/i
+				@ulcap = ulcap.match(/^\d+/).to_s.to_f * 1024
+			when /\d+g[a-z]*$/i
+				@ulcap = ulcap.match(/^\d+/).to_s.to_f * (1024 * 1024)
+			else
+				raise "?????"
+		end
+	end
+
+	def dltime
+		return ((@dlcap / @dlspeed) / 60) < 1 ? (@dlcap / @dlspeed).to_s + " seconds" : ((@dlcap / @dlspeed) / 60).to_s + " minutes"
+	end
+
+	def ultime
+		return ((@ulcap / @ulspeed) / 60) < 1 ? (@ulcap / @ulspeed).to_s + " seconds" : ((@ulcap / ulspeed) / 60).to_s + " minutes"
+	end
 end
 
-def bit_to_byte(bits)
-	return bits / 8
-end
+puts "good evening friends today i will be calculatehow long it takes to reach ur dl/ul cap"
+myconnection = Connection.new
 
-def megabytes_to_kilobytes(mb)
-	return mb * 1024
-end
+puts "please enter ur download speed in either kbit or mbit in this format: 512kbit"
+myconnection.dlspeed = gets.chomp
 
-def gigabytes_to_kilobytes(gb)
-	return megabytes_to_kilobytes(gb * 1024)
-end
+puts "ur max download speed is #{myconnection.dlspeed}kb/s right??"
+puts "please enter ur download cap in either megabytes or gigabytes in this format: 10gb"
+myconnection.dlcap = gets.chomp
 
-def seconds_to_minutes(sec)
-	return sec / 60
-end
-
-puts "good evening friends this is ambrosia and today i will be calculatehow long it takes to reach ur dl/ul cap"
-puts "u wanna enter ur dl speed in kilobits/sec or megabits/sec?\n(K/M)"
-
-case gets.chomp
-	when /^k\w*/i
-		puts "enter ur dl speed in kilobits"
-		dlspeed = bit_to_byte(Float(gets.chomp))
-	when /^m\w*/i
-		#converts megabit to kilobits (e.g. 10mbit to 10240kbit) then kilobits to kilobytes (e.g. 10240kbites to 1280kbytes)
-		puts "enter ur dl speed in megabits"
-		dlspeed = bit_to_byte(mbit_to_kbit(Float(gets.chomp)))
-	else
-		puts "start again, idiot."
-		exit
-end
-
-puts "ur max download speed is #{dlspeed}kb/s right??"
-puts "would u like to enter ur download cap megabytes or gigabytes??\n(M/G)"
-
-case gets.chomp
-	when /^m\w*/i
-		puts "please enter ur cap in megabytes"
-		dlcap = megabytes_to_kilobytes(Float(gets.chomp))
-	when /^g\w*/i
-		puts "please entr ur cap in gigabytes"
-		dlcap = gigabytes_to_kilobytes(Float(gets.chomp))
-	else
-		puts "and u tried so hard..."
-		exit
-end
-
-seconds_to_minutes(dlcap / dlspeed) < 1 ? dlresult = (dlcap/dlspeed).to_s + " seconds" : dlresult = seconds_to_minutes(dlcap / dlspeed).to_s + " minutes"
-
-puts "ok this how long it takes to reach ur download cap #{dlresult}!!!!!!!!!!"
+puts "ok this how long it takes to reach ur download cap #{myconnection.dltime}!!!!!!!!!!"
 puts "u wanna do upload speed too??\n(Y/N)"
 
 abort("good night...") if gets.chomp =~ /no?$/i
 
-puts "u wanna enter ur ul speed in kilobits/sec or megabits/sec?\n(K/M)"
+puts "please enter ur upload speed in either kbit or mbit in this format: 512kbit"
+myconnection.ulspeed = gets.chomp
 
-case gets.chomp
-	when /^k\w*/i
-		puts "enter ur ul speed in kilobits"
-		ulspeed = bit_to_byte(Float(gets.chomp))
-	when /^m\w*/i
-		puts "enter ur ul speed in megabits"
-		ulspeed = bit_to_byte(mbit_to_kbit(Float(gets.chomp)))
-	else
-		puts "start again, idiot."
-		exit
-end
+puts "ur max upload speed is #{myconnection.ulspeed}kb/s right??"
+puts "please enter ur upload cap in either megabytes or gigabytes in this format: 10gb"
+myconnection.ulcap = gets.chomp
 
-puts "ur max upload speed is #{ulspeed}kb/s right??"
-puts "would u like to enter ur upload cap megabytes or gigabytes??\n(M/G)"
-
-case gets.chomp
-	when /^m\w*/i
-		puts "please enter ur cap in megabytes"
-		ulcap = megabytes_to_kilobytes(Float(gets.chomp))
-	when /^g\w*/i
-		puts "please entr ur cap in gigabytes"
-		ulcap = gigabytes_to_kilobytes(Float(gets.chomp))
-	else
-		puts "and u tried so hard..."
-		exit
-end
-
-if seconds_to_minutes(dlcap / dlspeed) < 1
-	ulresult = (ulcap/ulspeed).to_s + " seconds"
-elsif
-	ulresult = seconds_to_minutes(dlcap / dlspeed).to_s + " minutes"
-end
-
-puts "download: #{dlresult}, upload: #{ulresult}.\nsad, isn't it?"
+puts "download: #{myconnection.dltime}, upload: #{myconnection.ultime}.\nsad, isn't it?"
