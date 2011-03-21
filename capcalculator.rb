@@ -2,17 +2,17 @@
 
 class Connection
 #store everything in kilobytes
-number_regex = /^[\d.?]+/
-kb_regex = /\d+k[a-z]*$/i
-mb_regex = /\d+m[a-z]*$/i
-gb_regex = /\d+m[a-z]*$/i
+@@number_regex = /^[\d.?]+/
+@@kb_regex = /\d+k[a-z]*$/i
+@@mb_regex = /\d+m[a-z]*$/i
+@@gb_regex = /\d+g[a-z]*$/i
 attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 	def dlspeed=(dlspeed)
 		case dlspeed
-			when kb_regex
-				@dlspeed = dlspeed.match(number_regex).to_s.to_f / 8
-			when mb_regex
-				@dlspeed = dlspeed.match(number_regex).to_s.to_f / 8 * 1024
+			when @@kb_regex
+				@dlspeed = dlspeed.match(@@number_regex).to_s.to_f / 8
+			when @@mb_regex
+				@dlspeed = dlspeed.match(@@number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didn't enter it in the correct format"
 		end
@@ -20,10 +20,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def ulspeed=(ulspeed)
 		case ulspeed
-			when kb_regex
-				@ulspeed = ulspeed.match(number_regex).to_s.to_f / 8
-			when mb_regex
-				@ulspeed = ulspeed.match(number_regex).to_s.to_f / 8 * 1024
+			when @@kb_regex
+				@ulspeed = ulspeed.match(@@number_regex).to_s.to_f / 8
+			when @@mb_regex
+				@ulspeed = ulspeed.match(@@number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didnt enter it in the correct format"
 		end
@@ -31,10 +31,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def dlcap=(dlcap)
 		case dlcap
-			when mb_regex
-				@dlcap = dlcap.match(number_regex).to_s.to_f * 1024
-			when gb_regex
-				@dlcap = dlcap.match(number_regex).to_s.to_f * (1024 * 1024)
+			when @@mb_regex
+				@dlcap = dlcap.match(@@number_regex).to_s.to_f * 1024
+			when @@gb_regex
+				@dlcap = dlcap.match(@@number_regex).to_s.to_f * (1024 * 1024)
 			else
 				raise "not right"
 		end
@@ -42,10 +42,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def ulcap=(ulcap)
 		case ulcap
-			when mb_regex
-				@ulcap = ulcap.match(number_regex).to_s.to_f * 1024
-			when gb_regex
-				@ulcap = ulcap.match(number_regex).to_s.to_f * (1024 * 1024)
+			when @@mb_regex
+				@ulcap = ulcap.match(@@number_regex).to_s.to_f * 1024
+			when @@gb_regex
+				@ulcap = ulcap.match(@@number_regex).to_s.to_f * (1024 * 1024)
 			else
 				raise "?????"
 		end
