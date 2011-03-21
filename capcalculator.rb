@@ -2,13 +2,17 @@
 
 class Connection
 #store everything in kilobytes
+number_regex = /^[\d.?]+/
+kb_regex = /\d+k[a-z]*$/i
+mb_regex = /\d+m[a-z]*$/i
+gb_regex = /\d+m[a-z]*$/i
 attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 	def dlspeed=(dlspeed)
 		case dlspeed
-			when /\d+k[a-z]*$/i
-				@dlspeed = dlspeed.match(/^\d+/).to_s.to_f / 8
-			when /\d+m[a-z]*$/i
-				@dlspeed = dlspeed.match(/^\d+/).to_s.to_f / 8 * 1024
+			when kb_regex
+				@dlspeed = dlspeed.match(number_regex).to_s.to_f / 8
+			when mb_regex
+				@dlspeed = dlspeed.match(number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didn't enter it in the correct format"
 		end
@@ -16,10 +20,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def ulspeed=(ulspeed)
 		case ulspeed
-			when /\d+k[a-z]*$/i
-				@ulspeed = ulspeed.match(/^\d+/).to_s.to_f / 8
-			when /\d+m[a-z]*$/i
-				@ulspeed = ulspeed.match(/^\d+/).to_s.to_f / 8 * 1024
+			when kb_regex
+				@ulspeed = ulspeed.match(number_regex).to_s.to_f / 8
+			when mb_regex
+				@ulspeed = ulspeed.match(number_regex).to_s.to_f / 8 * 1024
 			else
 				raise "you didnt enter it in the correct format"
 		end
@@ -27,10 +31,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def dlcap=(dlcap)
 		case dlcap
-			when /\d+m[a-z]*$/i
-				@dlcap = dlcap.match(/^\d+/).to_s.to_f * 1024
-			when /\d+g[a-z]*$/i
-				@dlcap = dlcap.match(/^\d+/).to_s.to_f * (1024 * 1024)
+			when mb_regex
+				@dlcap = dlcap.match(number_regex).to_s.to_f * 1024
+			when gb_regex
+				@dlcap = dlcap.match(number_regex).to_s.to_f * (1024 * 1024)
 			else
 				raise "not right"
 		end
@@ -38,10 +42,10 @@ attr_reader :dlspeed, :ulspeed, :dlcap, :ulcap
 
 	def ulcap=(ulcap)
 		case ulcap
-			when /\d+m[a-z]*$/i
-				@ulcap = ulcap.match(/^\d+/).to_s.to_f * 1024
-			when /\d+g[a-z]*$/i
-				@ulcap = ulcap.match(/^\d+/).to_s.to_f * (1024 * 1024)
+			when mb_regex
+				@ulcap = ulcap.match(number_regex).to_s.to_f * 1024
+			when gb_regex
+				@ulcap = ulcap.match(number_regex).to_s.to_f * (1024 * 1024)
 			else
 				raise "?????"
 		end
