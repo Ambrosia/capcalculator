@@ -121,3 +121,16 @@ puts "Are you uploading at max speed or not? enter either your speed in kilobyte
 myc.ulspdcur = gets.chomp
 
 puts "Download: #{myc.dlcapgb}gb in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s, Upload: #{myc.ulcapgb}gb in #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s."
+
+puts "Would you like to save? (Y/N)"
+abort if gets.chomp =~ /no?$/i
+
+filename = Time.now.to_i.to_s
+puts "Please enter the filename or enter nothing for #{filename}.txt (file mail be overwritten)"
+fninput = gets.chomp
+filename = fninput if fninput.empty? == false
+myfile = File.new("#{filename}.txt", "w")
+raise IOError, "Could not write to file" if File.writable?(myfile) == false
+myfile.puts "Download: #{myc.dlcapgb}gb in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s\nUpload: #{myc.ulcapgb}gb in #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s"
+puts "#{filename}.txt saved successfully" if File.readable?(myfile) && File.exists?(myfile) == true
+myfile.close
