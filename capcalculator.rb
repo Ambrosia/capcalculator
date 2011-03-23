@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'rainbow'
+
 class Connection
 #store everything in kilobytes
 #ok maybe im going a little overboard on this part
@@ -106,7 +109,7 @@ myc.dlcap = gets.chomp
 puts "Are you downloading at max speed or not? Enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
 myc.dlspdcur = gets.chomp
 
-puts "Cap of #{myc.dlcapgb}gb downloaded in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s"
+puts "Cap of #{(myc.dlcapgb.to_s + "gb").colour(:green)} downloaded in #{myc.dltime.to_s.colour(:green)} @ #{((myc.dlspdmax * myc.dlspdcur).to_s + "kb/s").color(:green)}"
 puts "Would you like to check upload speed too?\n(Y/N)"
 
 abort("good night...") if gets.chomp =~ /no?$/i
@@ -120,8 +123,7 @@ myc.ulcap = gets.chomp
 puts "Are you uploading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
 myc.ulspdcur = gets.chomp
 
-puts "Download: #{myc.dlcapgb}gb in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s, Upload: #{myc.ulcapgb}gb in #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s."
-
+puts "Download: #{(myc.dlcapgb.to_s + "gb").colour(:green)} in #{myc.dltime.to_s.colour(:green)} @ #{((myc.dlspdmax * myc.dlspdcur).to_s + "kb/s").colour(:green)}, Upload: #{(myc.ulcapgb.to_s + "gb").colour(:green)} in #{myc.ultime.to_s.colour(:green)} @ #{((myc.ulspdmax * myc.ulspdcur).to_s + "kb/s").colour(:green)}"
 puts "Would you like to save? (Y/N)"
 abort if gets.chomp =~ /no?$/i
 
