@@ -9,7 +9,7 @@ class Connection
 @@gb_regex = /\d+g[a-z]*$/i
 @@percent_regex = /%$/
 
-attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlspdcur, :ulspdcur
+attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlcapgb, :ulcapgb, :dlspdcur, :ulspdcur
 	def dlspdmax=(dlspdmax)
 		case dlspdmax
 			when @@kb_regex
@@ -43,6 +43,7 @@ attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlspdcur, :ulspdcur
 			else
 				raise "not right"
 		end
+		@dlcapgb = @dlcap / (1024 * 1024)
 	end
 
 	def ulcap=(ulcap)
@@ -54,6 +55,7 @@ attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlspdcur, :ulspdcur
 			else
 				raise "?????"
 		end
+		@ulcapgb = @ulcap / (1024 * 1024)
 	end
 
 	def dltime
@@ -93,32 +95,29 @@ attr_reader :dlspdmax, :ulspdmax, :dlcap, :ulcap, :dlspdcur, :ulspdcur
 	end
 end
 
-puts "good evening friends today i will be calculatehow long it takes to reach ur dl/ul cap"
 myc = Connection.new
 
-puts "please enter ur download speed in either kbit or mbit in this format: 512kbit"
+puts "Please enter your download speed in either kbit or mbit in this format: 512kbit"
 myc.dlspdmax = gets.chomp
 
-puts "ur max download speed is #{myc.dlspdmax}kb/s right??"
-puts "please enter ur download cap in either megabytes or gigabytes in this format: 10gb"
+puts "Please enter your download cap in either megabytes or gigabytes in this format: 10gb"
 myc.dlcap = gets.chomp
 
-puts "are you downloading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
+puts "Are you downloading at max speed or not? Enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
 myc.dlspdcur = gets.chomp
 
-puts "ok this how long it takes to reach ur download cap #{myc.dltime} at #{myc.dlspdmax * myc.dlspdcur}kb/s!!!!!!!!!!"
-puts "u wanna do upload speed too??\n(Y/N)"
+puts "Cap of #{myc.dlcapgb}gb downloaded in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s"
+puts "Would you like to check upload speed too?\n(Y/N)"
 
 abort("good night...") if gets.chomp =~ /no?$/i
 
-puts "please enter ur upload speed in either kbit or mbit in this format: 512kbit"
+puts "Please enter your upload speed in either kbit or mbit in this format: 512kbit"
 myc.ulspdmax = gets.chomp
 
-puts "ur max upload speed is #{myc.ulspdmax}kb/s right??"
-puts "please enter ur upload cap in either megabytes or gigabytes in this format: 10gb"
+puts "Please enter your upload cap in either megabytes or gigabytes in this format: 10gb"
 myc.ulcap = gets.chomp
 
-puts "are you uploading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
+puts "Are you uploading at max speed or not? enter either your speed in kilobytes per second, percentage of max speed or a number between 0 and 1 (enter 1 if you are at max speed)"
 myc.ulspdcur = gets.chomp
 
-puts "download: #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s, upload: #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s.\nsad, isn't it?"
+puts "Download: #{myc.dlcapgb}gb in #{myc.dltime} @ #{myc.dlspdmax * myc.dlspdcur}kb/s, Upload: #{myc.ulcapgb}gb in #{myc.ultime} @ #{myc.ulspdmax * myc.ulspdcur}kb/s."
